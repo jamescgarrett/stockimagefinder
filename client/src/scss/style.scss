@@ -5,3 +5,37 @@
 @import "../../node_modules/bulma/sass/components/_all";
 @import "../../node_modules/bulma/sass/grid/_all";
 @import "../../node_modules/bulma/sass/layout/_all";
+
+.field{
+  margin-bottom: 20px;
+
+  &:last-child{
+    margin-bottom: 0;
+  }
+}
+
+.filtersContainer{
+  position: relative;
+}
+
+.filtersButton{
+  position: relative;
+  z-index: 10;
+  text-align: right;
+  margin-top: 28px;
+}
+
+.filters{
+  position: absolute;
+  right: 0;
+  width: 100%;
+  z-index: 9;
+  padding: 15px;
+  background-color: #F7F7F7;
+  border-radius: 5px;
+  display: block;
+}
+
+.sourceTitle{
+  margin-bottom: 25px;
+}

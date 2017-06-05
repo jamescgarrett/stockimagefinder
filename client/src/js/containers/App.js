@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { post } from '../actions/actions.search';
-import { queryChange, styleChange, orientationChange, sourcesChange } from '../actions/actions.ui';
-import { SearchForm, SearchResults } from '../components';
+import { queryChange, styleChange, orientationChange, sourcesChange, toggleFilters } from '../actions/actions.ui';
+import { SearchForm, SearchResults, SearchFilters } from '../components';
 
 class App extends Component {
 
@@ -16,6 +16,7 @@ class App extends Component {
     query: PropTypes.string,
     orientation: PropTypes.string,
     sources: PropTypes.array,
+    filterStatus: PropTypes.bool,
     dispatch: PropTypes.func,
   }
 
@@ -39,6 +40,10 @@ class App extends Component {
     this.props.dispatch(sourcesChange(values));
   }
 
+  _handleToggleFilters(status) {
+    this.props.dispatch(toggleFilters(status));
+  }
+
   render() {
     const {
       results,
@@ -48,44 +53,51 @@ class App extends Component {
       style,
       orientation,
       sources,
+      filterStatus,
     } = this.props;
     return (
       <section className='section'>
         <div className='container'>
-          <div className='heading'>
-            <h2 className='title'>Search:</h2>
-            <p>Search for images using a keyword.</p>
-          </div>
+          <p>{error ? error : ''}</p>
           <div className='columns'>
-            <div className='column is-one-quarter'>
-              <p>{error ? error : ''}</p>
+            <div className='column is-10'>
               <SearchForm
                 onFormSubmit={data => this._handleFormSubmit(data)}
                 onQueryChange={value => this._handleQueryChange(value)}
-                onStyleChange={value => this._handleStyleChange(value)}
-                onOrientationChange={value => this._handleOrientationChange(value)}
-                onSourcesChange={values => this._handleSourcesChange(values)}
                 query={query}
                 style={style}
                 orientation={orientation}
                 sources={sources}
               />
             </div>
-            {isLoading &&
-              <div className='column'>
-                <h2>Loading...</h2>
-              </div>
-            }
-            {!isLoading && results !== null && Object.keys(results).length === 0 &&
-              <div className='column'>
-                <h2>No Results...</h2>
-              </div>
-            }
-
-            {results !== null && Object.keys(results).length > 0 &&
-              <SearchResults error={error} results={results} />
-            }
+            <div className='column is-2'>
+              <SearchFilters
+                onStyleChange={value => this._handleStyleChange(value)}
+                onOrientationChange={value => this._handleOrientationChange(value)}
+                onSourcesChange={values => this._handleSourcesChange(values)}
+                sources={sources}
+                style={style}
+                orientation={orientation}
+                onToggleFilters={status => this._handleToggleFilters(status)}
+                filterStatus={filterStatus}
+              />
+            </div>
           </div>
+
+          {isLoading &&
+            <div className='column'>
+              <h2>Loading...</h2>
+            </div>
+          }
+          {!isLoading && results !== null && Object.keys(results).length === 0 &&
+            <div className='column'>
+              <h2>No Results...</h2>
+            </div>
+          }
+
+          {results !== null && Object.keys(results).length > 0 &&
+            <SearchResults results={results} />
+          }
         </div>
       </section>
     );
@@ -100,6 +112,7 @@ const mapStateToProps = state => ({
   style: state.ui.style,
   orientation: state.ui.orientation,
   sources: state.ui.sources,
+  filterStatus: state.ui.filterStatus,
 });
 
 export default connect(mapStateToProps)(App);

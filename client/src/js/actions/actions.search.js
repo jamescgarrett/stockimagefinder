@@ -42,14 +42,14 @@ export const post = data => (dispatch) => {
   .then(checkHttpStatus)
   .then(parseJSON)
   .then((response) => {
-    dispatch(postRequestSuccess(response));
     console.log(response);
+    dispatch(postRequestSuccess(response));
   })
   .catch((err) => {
+    console.log(err);
     dispatch(postRequestFailure({
       error: err.message,
     }));
-    console.log(err);
   });
 };
 

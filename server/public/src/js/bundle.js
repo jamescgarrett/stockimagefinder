@@ -37313,13 +37313,13 @@ var post = exports.post = function post(data) {
       mode: 'cors',
       body: data
     }).then(_utils.checkHttpStatus).then(_utils.parseJSON).then(function (response) {
-      dispatch(postRequestSuccess(response));
       console.log(response);
+      dispatch(postRequestSuccess(response));
     }).catch(function (err) {
+      console.log(err);
       dispatch(postRequestFailure({
         error: err.message
       }));
-      console.log(err);
     });
   };
 };
@@ -37362,13 +37362,13 @@ var get = exports.get = function get(data) {
   };
 };
 
-},{"../constants":561,"../utils":575,"isomorphic-fetch":168}],557:[function(require,module,exports){
+},{"../constants":563,"../utils":577,"isomorphic-fetch":168}],557:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.sourcesChange = exports.orientationChange = exports.styleChange = exports.queryChange = undefined;
+exports.toggleFilters = exports.sourcesChange = exports.orientationChange = exports.styleChange = exports.queryChange = undefined;
 
 var _constants = require('../constants');
 
@@ -37400,7 +37400,263 @@ var sourcesChange = exports.sourcesChange = function sourcesChange(values) {
   };
 };
 
-},{"../constants":561}],558:[function(require,module,exports){
+var toggleFilters = exports.toggleFilters = function toggleFilters(status) {
+  var s = status ? false : true;
+  return {
+    type: _constants.SEARCH_FORM_UI_TOGGLE_FILTERS,
+    payload: s
+  };
+};
+
+},{"../constants":563}],558:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var SearchFilters = function (_Component) {
+  _inherits(SearchFilters, _Component);
+
+  function SearchFilters(props) {
+    _classCallCheck(this, SearchFilters);
+
+    var _this = _possibleConstructorReturn(this, (SearchFilters.__proto__ || Object.getPrototypeOf(SearchFilters)).call(this, props));
+
+    _this._handleStyleChange = _this._handleStyleChange.bind(_this);
+    _this._handleOrientationChange = _this._handleOrientationChange.bind(_this);
+    _this._handleSourcesChange = _this._handleSourcesChange.bind(_this);
+    _this._handleToggleFilters = _this._handleToggleFilters.bind(_this);
+    return _this;
+  }
+
+  _createClass(SearchFilters, [{
+    key: '_handleStyleChange',
+    value: function _handleStyleChange(e) {
+      this.props.onStyleChange(e.target.value);
+    }
+  }, {
+    key: '_handleOrientationChange',
+    value: function _handleOrientationChange(e) {
+      this.props.onOrientationChange(e.target.value);
+    }
+  }, {
+    key: '_handleSourcesChange',
+    value: function _handleSourcesChange(e) {
+      var sources = this.props.sources;
+
+      var values = sources;
+      var idx = values.indexOf(e.target.value);
+      if (idx !== -1 && !e.target.checked) {
+        values.splice(idx, 1);
+      } else {
+        values.push(e.target.value);
+      }
+      this.props.onSourcesChange(values);
+    }
+  }, {
+    key: '_handleToggleFilters',
+    value: function _handleToggleFilters() {
+      var filterStatus = this.props.filterStatus;
+
+      this.props.onToggleFilters(filterStatus);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props = this.props,
+          filterStatus = _props.filterStatus,
+          style = _props.style,
+          orientation = _props.orientation,
+          sources = _props.sources;
+
+      return _react2.default.createElement(
+        'div',
+        { className: 'filtersContainer' },
+        _react2.default.createElement(
+          'div',
+          { className: 'filtersButton' },
+          _react2.default.createElement(
+            'a',
+            { className: 'button is-light', onClick: this._handleToggleFilters },
+            filterStatus ? 'Close' : 'Filters'
+          )
+        ),
+        filterStatus && _react2.default.createElement(
+          'div',
+          { className: 'filters' },
+          _react2.default.createElement(
+            'div',
+            { className: 'field' },
+            _react2.default.createElement(
+              'p',
+              { className: 'control' },
+              _react2.default.createElement(
+                'strong',
+                null,
+                'File Type:'
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement(
+                'label',
+                { htmlFor: 'style', className: 'radio' },
+                _react2.default.createElement('input', {
+                  type: 'radio',
+                  name: 'style',
+                  value: 'photo',
+                  checked: style === 'photo',
+                  onChange: this._handleStyleChange
+                }),
+                'Photo'
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement(
+                'label',
+                { htmlFor: 'style', className: 'radio' },
+                _react2.default.createElement('input', {
+                  type: 'radio',
+                  name: 'style',
+                  value: 'illustration',
+                  checked: style === 'illustration',
+                  onChange: this._handleStyleChange
+                }),
+                'Illustration'
+              )
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'field' },
+            _react2.default.createElement(
+              'p',
+              { className: 'control' },
+              _react2.default.createElement(
+                'strong',
+                null,
+                'Orientation:'
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement(
+                'label',
+                { htmlFor: 'orientation', className: 'radio' },
+                _react2.default.createElement('input', {
+                  type: 'radio',
+                  name: 'orientation',
+                  value: 'landscape',
+                  checked: orientation === 'landscape',
+                  onChange: this._handleOrientationChange
+                }),
+                'Landscape'
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement(
+                'label',
+                { htmlFor: 'orientation', className: 'radio' },
+                _react2.default.createElement('input', {
+                  type: 'radio',
+                  name: 'orientation',
+                  value: 'portrait',
+                  checked: orientation === 'portrait',
+                  onChange: this._handleOrientationChange
+                }),
+                'Portrait'
+              )
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'field' },
+            _react2.default.createElement(
+              'p',
+              { className: 'control' },
+              _react2.default.createElement(
+                'strong',
+                null,
+                'Sources:'
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement(
+                'label',
+                { htmlFor: 'source', className: 'radio' },
+                _react2.default.createElement('input', {
+                  type: 'checkbox',
+                  name: 'source',
+                  value: 'gettyimages',
+                  checked: sources.indexOf('gettyimages') !== -1,
+                  onChange: this._handleSourcesChange
+                }),
+                'Getty Images'
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement(
+                'label',
+                { htmlFor: 'source', className: 'radio' },
+                _react2.default.createElement('input', {
+                  type: 'checkbox',
+                  name: 'source',
+                  value: 'shutterstock',
+                  checked: sources.indexOf('shutterstock') !== -1,
+                  onChange: this._handleSourcesChange
+                }),
+                'Shutterstock'
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement(
+                'label',
+                { htmlFor: 'source', className: 'radio' },
+                _react2.default.createElement('input', {
+                  type: 'checkbox',
+                  name: 'source',
+                  value: 'one23rf',
+                  checked: sources.indexOf('one23rf') !== -1,
+                  onChange: this._handleSourcesChange
+                }),
+                '123rf'
+              )
+            )
+          )
+        )
+      );
+    }
+  }]);
+
+  return SearchFilters;
+}(_react.Component);
+
+exports.default = SearchFilters;
+
+
+SearchFilters.propTypes = {
+  onStyleChange: _propTypes2.default.func.isRequired,
+  onOrientationChange: _propTypes2.default.func.isRequired,
+  onSourcesChange: _propTypes2.default.func.isRequired,
+  onToggleFilters: _propTypes2.default.func.isRequired,
+  sources: _propTypes2.default.array.isRequired,
+  style: _propTypes2.default.string.isRequired,
+  orientation: _propTypes2.default.string.isRequired,
+  filterStatus: _propTypes2.default.bool.isRequired
+
+};
+
+},{"prop-types":325,"react":521}],559:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -37435,9 +37691,6 @@ var SearchForm = function (_Component) {
 
     _this._handleSubmit = _this._handleSubmit.bind(_this);
     _this._handleQueryChange = _this._handleQueryChange.bind(_this);
-    _this._handleStyleChange = _this._handleStyleChange.bind(_this);
-    _this._handleOrientationChange = _this._handleOrientationChange.bind(_this);
-    _this._handleSourcesChange = _this._handleSourcesChange.bind(_this);
     return _this;
   }
 
@@ -37445,30 +37698,6 @@ var SearchForm = function (_Component) {
     key: '_handleQueryChange',
     value: function _handleQueryChange(e) {
       this.props.onQueryChange(e.target.value);
-    }
-  }, {
-    key: '_handleStyleChange',
-    value: function _handleStyleChange(e) {
-      this.props.onStyleChange(e.target.value);
-    }
-  }, {
-    key: '_handleOrientationChange',
-    value: function _handleOrientationChange(e) {
-      this.props.onOrientationChange(e.target.value);
-    }
-  }, {
-    key: '_handleSourcesChange',
-    value: function _handleSourcesChange(e) {
-      var sources = this.props.sources;
-
-      var values = sources;
-      var idx = values.indexOf(e.target.value);
-      if (idx !== -1 && !e.target.checked) {
-        values.splice(idx, 1);
-      } else {
-        values.push(e.target.value);
-      }
-      this.props.onSourcesChange(values);
     }
   }, {
     key: '_handleSubmit',
@@ -37488,107 +37717,33 @@ var SearchForm = function (_Component) {
       return _react2.default.createElement(
         'form',
         { onSubmit: this._handleSubmit },
-        _react2.default.createElement('input', { type: 'text', onChange: this._handleQueryChange, placeholder: 'Search Term...' }),
         _react2.default.createElement(
           'div',
-          null,
+          { className: 'field' },
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'style' },
+            'p',
+            { className: 'control' },
             _react2.default.createElement(
-              'b',
-              null,
-              'File Type'
-            )
-          ),
-          _react2.default.createElement('br', null),
-          _react2.default.createElement('input', {
-            type: 'radio',
-            name: 'style',
-            value: 'illustration',
-            onChange: this._handleStyleChange
-          }),
-          'Illustration',
-          _react2.default.createElement('br', null),
-          _react2.default.createElement('input', {
-            type: 'radio',
-            name: 'style',
-            value: 'photo',
-            onChange: this._handleStyleChange
-          }),
-          'Photo'
+              'label',
+              { htmlFor: 'query', className: 'label' },
+              'Search:'
+            ),
+            _react2.default.createElement('input', { className: 'input', type: 'text', onChange: this._handleQueryChange, placeholder: 'Search Term...' })
+          )
         ),
-        _react2.default.createElement('br', null),
         _react2.default.createElement(
           'div',
-          null,
+          { className: 'field' },
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'orientation' },
+            'p',
+            { className: 'control' },
             _react2.default.createElement(
-              'b',
-              null,
-              'Orientation'
+              'button',
+              { type: 'submit', className: 'button is-primary' },
+              'Search'
             )
-          ),
-          _react2.default.createElement('br', null),
-          _react2.default.createElement('input', {
-            type: 'radio',
-            name: 'orientation',
-            value: 'landscape',
-            onChange: this._handleOrientationChange
-          }),
-          'Landscape',
-          _react2.default.createElement('br', null),
-          _react2.default.createElement('input', {
-            type: 'radio',
-            name: 'orientation',
-            value: 'portrait',
-            onChange: this._handleOrientationChange
-          }),
-          'Portrait'
-        ),
-        _react2.default.createElement('br', null),
-        _react2.default.createElement(
-          'div',
-          null,
-          _react2.default.createElement(
-            'label',
-            { htmlFor: 'source' },
-            _react2.default.createElement(
-              'b',
-              null,
-              'Sites to Search'
-            )
-          ),
-          _react2.default.createElement('br', null),
-          _react2.default.createElement('input', {
-            type: 'checkbox',
-            name: 'source',
-            value: 'gettyimages',
-            onChange: this._handleSourcesChange
-          }),
-          'Getty Images (includes: iStock, ThinkStock)',
-          _react2.default.createElement('br', null),
-          _react2.default.createElement('input', {
-            type: 'checkbox',
-            name: 'source',
-            value: 'shutterstock',
-            onChange: this._handleSourcesChange
-          }),
-          'Shutterstock',
-          _react2.default.createElement('br', null),
-          _react2.default.createElement('input', {
-            type: 'checkbox',
-            name: 'source',
-            value: 'one23rf',
-            onChange: this._handleSourcesChange
-          }),
-          '123rf',
-          _react2.default.createElement('br', null)
-        ),
-        _react2.default.createElement('br', null),
-        _react2.default.createElement('input', { type: 'submit', value: 'Search' })
+          )
+        )
       );
     }
   }]);
@@ -37602,16 +37757,56 @@ exports.default = SearchForm;
 SearchForm.propTypes = {
   onFormSubmit: _propTypes2.default.func.isRequired,
   onQueryChange: _propTypes2.default.func.isRequired,
-  onStyleChange: _propTypes2.default.func.isRequired,
-  onOrientationChange: _propTypes2.default.func.isRequired,
-  onSourcesChange: _propTypes2.default.func.isRequired,
   query: _propTypes2.default.string.isRequired,
   style: _propTypes2.default.string.isRequired,
   orientation: _propTypes2.default.string.isRequired,
   sources: _propTypes2.default.array.isRequired
 };
 
-},{"prop-types":325,"react":521}],559:[function(require,module,exports){
+},{"prop-types":325,"react":521}],560:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _components = require('../components');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var SearchResults = function SearchResults(_ref) {
+  var results = _ref.results;
+  return _react2.default.createElement(
+    'div',
+    null,
+    _react2.default.createElement(
+      'p',
+      null,
+      results.error ? _react2.default.createElement(
+        'span',
+        { className: 'error' },
+        'results.error'
+      ) : ''
+    ),
+    results.error === undefined && _react2.default.createElement(_components.SearchResultsImages, { results: results })
+  );
+};
+
+SearchResults.propTypes = {
+  results: _propTypes2.default.object.isRequired
+};
+
+exports.default = SearchResults;
+
+},{"../components":562,"prop-types":325,"react":521}],561:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -37628,34 +37823,18 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var SearchResults = function SearchResults(_ref) {
-  var results = _ref.results,
-      error = _ref.error;
+var SearchResultsImages = function SearchResultsImages(_ref) {
+  var results = _ref.results;
   return _react2.default.createElement(
     'div',
-    null,
-    _react2.default.createElement(
-      'h1',
-      { className: 'title' },
-      'Searching for: ',
-      results.query
-    ),
-    _react2.default.createElement(
-      'p',
-      null,
-      error ? error : ''
-    ),
-    results.data.gettyimages !== null && _react2.default.createElement(
+    { className: 'columns' },
+    results.data.gettyimages !== undefined && _react2.default.createElement(
       'div',
       { className: 'column' },
       _react2.default.createElement(
-        'div',
-        { className: 'heading' },
-        _react2.default.createElement(
-          'h2',
-          { className: 'title' },
-          'Getty Images'
-        )
+        'h2',
+        { className: 'title sourceTitle' },
+        'Getty Images'
       ),
       _react2.default.createElement(
         'div',
@@ -37686,17 +37865,13 @@ var SearchResults = function SearchResults(_ref) {
         })
       )
     ),
-    results.data.shutterstock !== null && _react2.default.createElement(
+    results.data.shutterstock !== undefined && _react2.default.createElement(
       'div',
       { className: 'column' },
       _react2.default.createElement(
-        'div',
-        { className: 'heading' },
-        _react2.default.createElement(
-          'h2',
-          { className: 'title' },
-          'Shutterstock'
-        )
+        'h2',
+        { className: 'title sourceTitle' },
+        'Shutterstock'
       ),
       _react2.default.createElement(
         'div',
@@ -37722,17 +37897,13 @@ var SearchResults = function SearchResults(_ref) {
         })
       )
     ),
-    results.data.one23rf !== null && _react2.default.createElement(
+    results.data.one23rf !== undefined && _react2.default.createElement(
       'div',
       { className: 'column' },
       _react2.default.createElement(
-        'div',
-        { className: 'heading' },
-        _react2.default.createElement(
-          'h2',
-          { className: 'title' },
-          '123rf'
-        )
+        'h2',
+        { className: 'title sourceTitle' },
+        '123rf'
       ),
       _react2.default.createElement(
         'div',
@@ -37764,20 +37935,19 @@ var SearchResults = function SearchResults(_ref) {
   );
 };
 
-SearchResults.propTypes = {
-  results: _propTypes2.default.object.isRequired,
-  error: _propTypes2.default.string.isRequired
+SearchResultsImages.propTypes = {
+  results: _propTypes2.default.object.isRequired
 };
 
-exports.default = SearchResults;
+exports.default = SearchResultsImages;
 
-},{"prop-types":325,"react":521}],560:[function(require,module,exports){
+},{"prop-types":325,"react":521}],562:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.SearchResults = exports.SearchForm = undefined;
+exports.SearchResultsImages = exports.SearchFilters = exports.SearchResults = exports.SearchForm = undefined;
 
 var _SearchForm2 = require('./SearchForm.component');
 
@@ -37787,12 +37957,22 @@ var _SearchResults2 = require('./SearchResults.component');
 
 var _SearchResults3 = _interopRequireDefault(_SearchResults2);
 
+var _SearchFilters2 = require('./SearchFilters.component');
+
+var _SearchFilters3 = _interopRequireDefault(_SearchFilters2);
+
+var _SearchResultsImages2 = require('./SearchResultsImages.component');
+
+var _SearchResultsImages3 = _interopRequireDefault(_SearchResultsImages2);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.SearchForm = _SearchForm3.default;
 exports.SearchResults = _SearchResults3.default;
+exports.SearchFilters = _SearchFilters3.default;
+exports.SearchResultsImages = _SearchResultsImages3.default;
 
-},{"./SearchForm.component":558,"./SearchResults.component":559}],561:[function(require,module,exports){
+},{"./SearchFilters.component":558,"./SearchForm.component":559,"./SearchResults.component":560,"./SearchResultsImages.component":561}],563:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -37806,12 +37986,13 @@ var SEARCH_FORM_UI_QUERY = exports.SEARCH_FORM_UI_QUERY = 'SEARCH_FORM_UI_QUERY'
 var SEARCH_FORM_UI_STYLE = exports.SEARCH_FORM_UI_STYLE = 'SEARCH_FORM_UI_STYLE';
 var SEARCH_FORM_UI_ORIENTATION = exports.SEARCH_FORM_UI_ORIENTATION = 'SEARCH_FORM_UI_ORIENTATION';
 var SEARCH_FORM_UI_SOURCES = exports.SEARCH_FORM_UI_SOURCES = 'SEARCH_FORM_UI_SOURCES';
+var SEARCH_FORM_UI_TOGGLE_FILTERS = exports.SEARCH_FORM_UI_TOGGLE_FILTERS = 'SEARCH_FORM_UI_TOGGLE_FILTERS';
 
 var GET_REQUEST = exports.GET_REQUEST = 'GET_REQUEST';
 var GET_REQUEST_FAILURE = exports.GET_REQUEST_FAILURE = 'GET_REQUEST_FAILURE';
 var GET_REQUEST_SUCCESS = exports.GET_REQUEST_SUCCESS = 'GET_REQUEST_SUCCESS';
 
-},{}],562:[function(require,module,exports){
+},{}],564:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -37879,6 +38060,11 @@ var App = function (_Component) {
       this.props.dispatch((0, _actions2.sourcesChange)(values));
     }
   }, {
+    key: '_handleToggleFilters',
+    value: function _handleToggleFilters(status) {
+      this.props.dispatch((0, _actions2.toggleFilters)(status));
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this2 = this;
@@ -37890,7 +38076,8 @@ var App = function (_Component) {
           query = _props.query,
           style = _props.style,
           orientation = _props.orientation,
-          sources = _props.sources;
+          sources = _props.sources,
+          filterStatus = _props.filterStatus;
 
       return _react2.default.createElement(
         'section',
@@ -37899,30 +38086,16 @@ var App = function (_Component) {
           'div',
           { className: 'container' },
           _react2.default.createElement(
-            'div',
-            { className: 'heading' },
-            _react2.default.createElement(
-              'h2',
-              { className: 'title' },
-              'Search:'
-            ),
-            _react2.default.createElement(
-              'p',
-              null,
-              'Search for images using a keyword.'
-            )
+            'p',
+            null,
+            error ? error : ''
           ),
           _react2.default.createElement(
             'div',
             { className: 'columns' },
             _react2.default.createElement(
               'div',
-              { className: 'column is-one-quarter' },
-              _react2.default.createElement(
-                'p',
-                null,
-                error ? error : ''
-              ),
+              { className: 'column is-10' },
               _react2.default.createElement(_components.SearchForm, {
                 onFormSubmit: function onFormSubmit(data) {
                   return _this2._handleFormSubmit(data);
@@ -37930,6 +38103,16 @@ var App = function (_Component) {
                 onQueryChange: function onQueryChange(value) {
                   return _this2._handleQueryChange(value);
                 },
+                query: query,
+                style: style,
+                orientation: orientation,
+                sources: sources
+              })
+            ),
+            _react2.default.createElement(
+              'div',
+              { className: 'column is-2' },
+              _react2.default.createElement(_components.SearchFilters, {
                 onStyleChange: function onStyleChange(value) {
                   return _this2._handleStyleChange(value);
                 },
@@ -37939,32 +38122,35 @@ var App = function (_Component) {
                 onSourcesChange: function onSourcesChange(values) {
                   return _this2._handleSourcesChange(values);
                 },
-                query: query,
+                sources: sources,
                 style: style,
                 orientation: orientation,
-                sources: sources
+                onToggleFilters: function onToggleFilters(status) {
+                  return _this2._handleToggleFilters(status);
+                },
+                filterStatus: filterStatus
               })
-            ),
-            isLoading && _react2.default.createElement(
-              'div',
-              { className: 'column' },
-              _react2.default.createElement(
-                'h2',
-                null,
-                'Loading...'
-              )
-            ),
-            !isLoading && results !== null && Object.keys(results).length === 0 && _react2.default.createElement(
-              'div',
-              { className: 'column' },
-              _react2.default.createElement(
-                'h2',
-                null,
-                'No Results...'
-              )
-            ),
-            results !== null && Object.keys(results).length > 0 && _react2.default.createElement(_components.SearchResults, { error: error, results: results })
-          )
+            )
+          ),
+          isLoading && _react2.default.createElement(
+            'div',
+            { className: 'column' },
+            _react2.default.createElement(
+              'h2',
+              null,
+              'Loading...'
+            )
+          ),
+          !isLoading && results !== null && Object.keys(results).length === 0 && _react2.default.createElement(
+            'div',
+            { className: 'column' },
+            _react2.default.createElement(
+              'h2',
+              null,
+              'No Results...'
+            )
+          ),
+          results !== null && Object.keys(results).length > 0 && _react2.default.createElement(_components.SearchResults, { results: results })
         )
       );
     }
@@ -37981,6 +38167,7 @@ App.propTypes = {
   query: _propTypes2.default.string,
   orientation: _propTypes2.default.string,
   sources: _propTypes2.default.array,
+  filterStatus: _propTypes2.default.bool,
   dispatch: _propTypes2.default.func
 };
 
@@ -37993,13 +38180,14 @@ var mapStateToProps = function mapStateToProps(state) {
     query: state.ui.query,
     style: state.ui.style,
     orientation: state.ui.orientation,
-    sources: state.ui.sources
+    sources: state.ui.sources,
+    filterStatus: state.ui.filterStatus
   };
 };
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(App);
 
-},{"../actions/actions.search":556,"../actions/actions.ui":557,"../components":560,"prop-types":325,"react":521,"react-redux":490}],563:[function(require,module,exports){
+},{"../actions/actions.search":556,"../actions/actions.ui":557,"../components":562,"prop-types":325,"react":521,"react-redux":490}],565:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -38028,7 +38216,7 @@ exports.default = (0, _reduxDevtools.createDevTools)(_react2.default.createEleme
   _react2.default.createElement(_reduxDevtoolsLogMonitor2.default, null)
 ));
 
-},{"react":521,"redux-devtools":542,"redux-devtools-dock-monitor":525,"redux-devtools-log-monitor":536}],564:[function(require,module,exports){
+},{"react":521,"redux-devtools":542,"redux-devtools-dock-monitor":525,"redux-devtools-log-monitor":536}],566:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -38075,7 +38263,7 @@ Root.propTypes = {
 
 exports.default = Root;
 
-},{"../App":562,"../DevTools":563,"prop-types":325,"react":521,"react-redux":490}],565:[function(require,module,exports){
+},{"../App":564,"../DevTools":565,"prop-types":325,"react":521,"react-redux":490}],567:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -38087,7 +38275,7 @@ if (process.env.NODE_ENV === 'production') {
 
 }).call(this,require('_process'))
 
-},{"./Root.dev":564,"./Root.prod":566,"_process":320}],566:[function(require,module,exports){
+},{"./Root.dev":566,"./Root.prod":568,"_process":320}],568:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -38125,7 +38313,7 @@ Root.propTypes = {
 
 exports.default = Root;
 
-},{"../App":562,"prop-types":325,"react":521,"react-redux":490}],567:[function(require,module,exports){
+},{"../App":564,"prop-types":325,"react":521,"react-redux":490}],569:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -38150,7 +38338,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.Root = _Root3.default;
 
-},{"./App":562,"./Root/Root":565}],568:[function(require,module,exports){
+},{"./App":564,"./Root/Root":567}],570:[function(require,module,exports){
 'use strict';
 
 var _react = require('react');
@@ -38171,7 +38359,7 @@ var store = (0, _configureStore2.default)(window.__INITIAL_STATE__);
 
 (0, _reactDom.render)(_react2.default.createElement(_containers.Root, { store: store }), document.getElementById('root'));
 
-},{"./containers":567,"./store/configureStore":573,"react":521,"react-dom":340}],569:[function(require,module,exports){
+},{"./containers":569,"./store/configureStore":575,"react":521,"react-dom":340}],571:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -38195,7 +38383,7 @@ exports.default = (0, _redux.combineReducers)({
   ui: _reducer4.default
 });
 
-},{"./reducer.search":570,"./reducer.ui":571,"redux":550}],570:[function(require,module,exports){
+},{"./reducer.search":572,"./reducer.ui":573,"redux":550}],572:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -38256,7 +38444,7 @@ function search() {
   }
 }
 
-},{"../constants":561}],571:[function(require,module,exports){
+},{"../constants":563}],573:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -38271,9 +38459,10 @@ var _constants = require('../constants');
 
 var initialState = {
   query: '',
-  style: '',
-  orientation: '',
-  sources: []
+  style: 'photo',
+  orientation: 'landscape',
+  sources: ['gettyimages', 'shutterstock', 'one23rf'],
+  filterStatus: false
 };
 
 function updateForm() {
@@ -38299,12 +38488,16 @@ function updateForm() {
       return _extends({}, state, {
         sources: payload
       });
+    case _constants.SEARCH_FORM_UI_TOGGLE_FILTERS:
+      return _extends({}, state, {
+        filterStatus: payload
+      });
     default:
       return state;
   }
 }
 
-},{"../constants":561}],572:[function(require,module,exports){
+},{"../constants":563}],574:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -38338,7 +38531,7 @@ function configureStore(initialState) {
   return store;
 }
 
-},{"../containers/DevTools":563,"../reducers":569,"redux":550,"redux-devtools":542,"redux-thunk":544}],573:[function(require,module,exports){
+},{"../containers/DevTools":565,"../reducers":571,"redux":550,"redux-devtools":542,"redux-thunk":544}],575:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -38350,7 +38543,7 @@ if (process.env.NODE_ENV === 'production') {
 
 }).call(this,require('_process'))
 
-},{"./configureStore.dev":572,"./configureStore.prod":574,"_process":320}],574:[function(require,module,exports){
+},{"./configureStore.dev":574,"./configureStore.prod":576,"_process":320}],576:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -38380,7 +38573,7 @@ function configureStore(initialState) {
   return store;
 }
 
-},{"../reducers":569,"redux":550,"redux-devtools":542,"redux-thunk":544}],575:[function(require,module,exports){
+},{"../reducers":571,"redux":550,"redux-devtools":542,"redux-thunk":544}],577:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38412,5 +38605,5 @@ function parseJSON(response) {
   return response.json();
 }
 
-},{}]},{},[568])
+},{}]},{},[570])
 //# sourceMappingURL=app.js.map
